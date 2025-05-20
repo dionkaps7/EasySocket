@@ -4,10 +4,10 @@ import socket
 
 
 class EasySockClientSocket(object):
-    event_messaged = threading.Event()
-    closed = False
-
     def __init__(self, sock: socket.socket, suffix: bytes):
+        self.event_messaged = threading.Event()
+        self.closed = False
+
         self.sock = sock
         self.suffix = suffix
         self.on_message: Optional[Callable[[bytes], None]] = None
@@ -25,7 +25,7 @@ class EasySockClientSocket(object):
                     self.event_messaged.set()
         except Exception:
             self.closed = True
-            
+
             if self.on_disconnect:
                 self.on_disconnect()
     
