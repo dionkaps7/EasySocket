@@ -78,6 +78,5 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-```
+
 Let me know if you want badges (PyPI, license, version), usage in production, or contributor sections added too.
-```
