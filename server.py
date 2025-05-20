@@ -4,6 +4,8 @@ import socket
 
 
 class EasySocketServerClient(object):
+    event_messaged = threading.Event()
+
     def __init__(self, sock: socket.socket, suffix: bytes):
         self.sock = sock
         self.suffix = suffix
@@ -16,8 +18,10 @@ class EasySocketServerClient(object):
         try:
             while True:
                 if self.on_message:
+                    self.event_messaged.clear()
                     message = self.recv_message()
                     self.on_message(message)
+                    self.event_messaged.set()
         except Exception:
             if self.on_disconnect:
                 self.on_disconnect()
@@ -36,6 +40,11 @@ class EasySocketServerClient(object):
         
         return message.removesuffix(self.suffix)
 
+    def send_message(self, message: bytes):
+        self.sock.send(message + self.suffix)
+    
+    def wait_message(self):
+        self.event_messaged.wait()
 
 class EasySocketServer(object):
     def __init__(self, host: str, port: int, on_connect: Callable[[EasySocketServerClient], None], suffix: bytes = b"\x00\x00\x00\x00\x00"):
