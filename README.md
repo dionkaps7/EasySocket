@@ -4,17 +4,19 @@ Effortless Python socket server for quick integration.
 # Examples
 ## Server
 ```python
-from server import EasySocketServer, EasySocketServerClient
+from peer import EasySocketPeer
+from server import EasySocketServer
 
-def on_connect(sock_client: EasySocketServerClient):
-    print(f"Connected: {sock_client.sock.getpeername()}")
+def on_connect(sock_client: EasySocketPeer):
+    client_address = sock_client.sock.getpeername()
+    print(f"Connected: {client_address}")
 
     def on_message(data: bytes):
-        print(f"Received ({sock_client.sock.getpeername()}): {data}")
+        print(f"Received ({client_address}): {data}")
         sock_client.send_message(b"Acknowledged: " + data)
     
     def on_disconnect():
-        print(f"Disconnected: {sock_client.sock.getpeername()}")
+        print(f"Disconnected: {client_address}")
 
     sock_client.on_message = on_message
     sock_client.on_disconnect = on_disconnect
@@ -33,9 +35,10 @@ if __name__ == "__main__":
 
 ## Client
 ```python
-from client import EasySockClient, EasySockClientSocket
+from peer import EasySocketPeer
+from client import EasySocketClient
 
-def on_connect(sock: EasySockClientSocket):
+def on_connect(sock: EasySocketPeer):
     print(f"Connected to server: {sock.sock.getpeername()}")
 
     def on_message(message: bytes):
@@ -64,7 +67,7 @@ def main():
     host = "127.0.0.1"
     port = 4444
 
-    client = EasySockClient(host=host, port=port, on_connect=on_connect, timeout=10, threaded=False)
+    client = EasySocketClient(host=host, port=port, on_connect=on_connect, timeout=10, threaded=False)
 
 if __name__ == "__main__":
     main()
