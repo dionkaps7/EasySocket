@@ -21,11 +21,30 @@ class EasySocketServerClient(object):
                 if self.on_message:
                     self.event_messaged.clear()
                     message = self.recv_message()
+                    if not message and self.closed:
+                        break
                     self.on_message(message)
                     self.event_messaged.set()
         except Exception:
             self.closed = True
 
+            if self.on_disconnect:
+                self.on_disconnect()
+    
+    def close(self):
+        if not self.closed:
+            self.closed = True
+
+            try:
+                self.sock.shutdown(socket.SHUT_RDWR)
+            except Exception:
+                pass
+
+            try:
+                self.sock.close()
+            except Exception:
+                pass
+            
             if self.on_disconnect:
                 self.on_disconnect()
 
@@ -35,19 +54,23 @@ class EasySocketServerClient(object):
         while True:
             chunk = self.sock.recv(1)
             if not chunk:
-                raise Exception("Client disconnected unexpectedly.")
+                self.closed = True
+                if self.on_disconnect:
+                    self.on_disconnect
+                return b""
 
             message += chunk
             if message.endswith(self.suffix):
                 break
         
-        return message.removesuffix(self.suffix)
+        return message[:-len(self.suffix)]
 
     def send_message(self, message: bytes):
         self.sock.send(message + self.suffix)
     
     def wait_message(self):
         self.event_messaged.wait()
+        
 
 class EasySocketServer(object):
     def __init__(self, host: str, port: int, on_connect: Callable[[EasySocketServerClient], None], suffix: bytes = b"\x00\x00\x00\x00\x00"):
@@ -61,8 +84,8 @@ class EasySocketServer(object):
     def _listen(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock = self.sock
-        sock.bind((self.host, self.port))
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind((self.host, self.port))
         sock.listen()
 
         while True:
