@@ -1,24 +1,8 @@
 # EasySocket
 Effortless Python socket server for quick integration.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Example](#example)
-- [How It Works](#how-it-works)
-- [Requirements](#requirements)
-- [License](#license)
-
-## Overview
-**EasySocketServer** is the easiest possible socket server implementation in Python. It allows you to handle new client connections, messages, and disconnections with clean, Lua-style callbacks.
-
-## Features
-- Minimal setup
-- Custom `on_connect`, `on_message`, and `on_disconnect` hooks
-- Easy-to-use wrapper for each client socket
-
-## Example
+# Examples
+## Server
 ```python
 from server import EasySocketServer, EasySocketServerClient
 
@@ -27,6 +11,7 @@ def on_connect(sock_client: EasySocketServerClient):
 
     def on_message(data: bytes):
         print(f"Received ({sock_client.sock.getpeername()}): {data}")
+        sock_client.send_message(b"Acknowledged: " + data)
     
     def on_disconnect():
         print(f"Disconnected: {sock_client.sock.getpeername()}")
@@ -46,13 +31,44 @@ if __name__ == "__main__":
     main()
 ```
 
-## How It Works
-- `EasySocketServer` listens for incoming connections
-- When a client connects, your `on_connect` callback runs
-- You can assign `on_message` and `on_disconnect` callbacks to each client instance
+## Client
+```python
+from client import EasySockClient, EasySockClientSocket
 
-# Requirements
-- Python 3.6+
+def on_connect(sock: EasySockClientSocket):
+    print(f"Connected to server: {sock.sock.getpeername()}")
+
+    def on_message(message: bytes):
+        print(f"Message from the server: {message}")
+
+    def on_disconnect():
+        print(f"Disconnected from the server.")
+
+    sock.sock.settimeout(None)
+    sock.on_message = on_message
+    sock.on_disconnect = on_disconnect
+
+    while True:
+        if sock.closed:
+            break
+
+        message = input("Send message: ")
+
+        if sock.closed:
+            break
+
+        sock.send_message(message=message.encode())
+        sock.wait_message()
+
+def main():
+    host = "127.0.0.1"
+    port = 4444
+
+    client = EasySockClient(host=host, port=port, on_connect=on_connect, timeout=10, threaded=False)
+
+if __name__ == "__main__":
+    main()
+```
 
 # License
 ```
@@ -78,5 +94,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-
-Let me know if you want badges (PyPI, license, version), usage in production, or contributor sections added too.
