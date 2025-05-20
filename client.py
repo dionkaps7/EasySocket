@@ -5,6 +5,7 @@ import socket
 
 class EasySockClientSocket(object):
     event_messaged = threading.Event()
+    closed = False
 
     def __init__(self, sock: socket.socket, suffix: bytes):
         self.sock = sock
@@ -23,6 +24,8 @@ class EasySockClientSocket(object):
                     self.on_message(message)
                     self.event_messaged.set()
         except Exception:
+            self.closed = True
+            
             if self.on_disconnect:
                 self.on_disconnect()
     
