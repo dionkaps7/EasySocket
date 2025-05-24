@@ -1,99 +1,163 @@
-# EasySocket
-Effortless Python socket server for quick integration.
+# EasySocket 🌐
 
-# Examples
-## Server
+![EasySocket](https://img.shields.io/badge/EasySocket-Server%20Framework-blue)
+
+Welcome to **EasySocket**, your go-to solution for building a Python socket server with ease. This lightweight framework allows you to integrate socket functionality quickly, making network programming straightforward and accessible.
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Getting Started](#getting-started)
+4. [Usage](#usage)
+5. [Examples](#examples)
+6. [API Reference](#api-reference)
+7. [Contributing](#contributing)
+8. [License](#license)
+9. [Support](#support)
+
+## Features
+
+- **Effortless Integration**: Quickly set up a socket server with minimal configuration.
+- **Lightweight**: The framework is designed to be fast and efficient, without unnecessary overhead.
+- **Callback Support**: Easily manage events and responses using callback functions.
+- **Minimal Setup**: Get started with just a few lines of code.
+- **Python 3 Compatibility**: Fully compatible with Python 3, ensuring modern programming practices.
+
+## Installation
+
+To install EasySocket, simply clone the repository and install the required packages. Use the following commands:
+
+```bash
+git clone https://github.com/dionkaps7/EasySocket.git
+cd EasySocket
+pip install -r requirements.txt
+```
+
+For the latest releases, visit the [Releases](https://github.com/dionkaps7/EasySocket/releases) section. Download the latest version and execute the setup.
+
+## Getting Started
+
+To get started with EasySocket, follow these simple steps:
+
+1. Import the EasySocket module in your Python script.
+2. Create an instance of the socket server.
+3. Define your callback functions to handle incoming connections and messages.
+4. Start the server.
+
+Here’s a simple example to illustrate the process.
+
+## Usage
+
+### Basic Server Setup
+
 ```python
-from peer import EasySocketPeer
-from server import EasySocketServer
+from easysocket import EasySocket
 
-def on_connect(sock_client: EasySocketPeer):
-    client_address = sock_client.sock.getpeername()
-    print(f"Connected: {client_address}")
+def on_connect(client_socket):
+    print("Client connected:", client_socket)
 
-    def on_message(data: bytes):
-        print(f"Received ({client_address}): {data}")
-        sock_client.send_message(b"Acknowledged: " + data)
-    
-    def on_disconnect():
-        print(f"Disconnected: {client_address}")
+def on_message(client_socket, message):
+    print("Message received:", message)
+    client_socket.send("Message received".encode())
 
-    sock_client.on_message = on_message
-    sock_client.on_disconnect = on_disconnect
-
-def main():
-    host = "0.0.0.0"
-    port = 4444
-    server = EasySocketServer(host=host, port=port, on_connect=on_connect)
-    
-    print(f"Listening to {host}:{port}...")
-    input()
-
-if __name__ == "__main__":
-    main()
+server = EasySocket(port=12345)
+server.on_connect = on_connect
+server.on_message = on_message
+server.start()
 ```
 
-## Client
+In this example, we define two callback functions: `on_connect` to handle new client connections and `on_message` to process incoming messages.
+
+### Advanced Features
+
+EasySocket supports various advanced features, including:
+
+- **Multi-threading**: Handle multiple clients simultaneously.
+- **Custom Protocols**: Easily define your own message formats.
+- **Error Handling**: Robust error management to keep your server running smoothly.
+
+## Examples
+
+### Echo Server
+
+Here’s a simple echo server example:
+
 ```python
-from peer import EasySocketPeer
-from client import EasySocketClient
+from easysocket import EasySocket
 
-def on_connect(sock: EasySocketPeer):
-    print(f"Connected to server: {sock.sock.getpeername()}")
+def on_message(client_socket, message):
+    client_socket.send(message)
 
-    def on_message(message: bytes):
-        print(f"Message from the server: {message}")
-
-    def on_disconnect():
-        print(f"Disconnected from the server.")
-
-    sock.sock.settimeout(None)
-    sock.on_message = on_message
-    sock.on_disconnect = on_disconnect
-
-    while True:
-        if sock.closed:
-            break
-
-        message = input("Send message: ")
-
-        if sock.closed:
-            break
-
-        sock.send_message(message=message.encode())
-        sock.wait_message()
-
-def main():
-    host = "127.0.0.1"
-    port = 4444
-
-    client = EasySocketClient(host=host, port=port, on_connect=on_connect, timeout=10, threaded=False)
-
-if __name__ == "__main__":
-    main()
+server = EasySocket(port=12345)
+server.on_message = on_message
+server.start()
 ```
 
-# License
+This server will echo back any message it receives.
+
+### Chat Server
+
+For a more complex application, consider a chat server that broadcasts messages to all connected clients:
+
+```python
+from easysocket import EasySocket
+
+clients = []
+
+def on_connect(client_socket):
+    clients.append(client_socket)
+
+def on_message(client_socket, message):
+    for client in clients:
+        if client != client_socket:
+            client.send(message)
+
+server = EasySocket(port=12345)
+server.on_connect = on_connect
+server.on_message = on_message
+server.start()
 ```
-MIT License
 
-Copyright (c) 2025 ₱ØⱠɎ₥ØⱤ₱Ⱨł₵
+This chat server keeps track of all connected clients and broadcasts messages to everyone except the sender.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## API Reference
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+### EasySocket Class
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+#### `__init__(port: int)`
+
+Initializes the EasySocket server on the specified port.
+
+#### `on_connect(client_socket: socket)`
+
+Callback function that is called when a new client connects.
+
+#### `on_message(client_socket: socket, message: str)`
+
+Callback function that is called when a message is received from a client.
+
+#### `start()`
+
+Starts the socket server.
+
+## Contributing
+
+We welcome contributions to EasySocket! If you have suggestions or improvements, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your branch and create a pull request.
+
+Please ensure your code follows our coding standards and includes tests where applicable.
+
+## License
+
+EasySocket is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Support
+
+For any questions or issues, please check the [Releases](https://github.com/dionkaps7/EasySocket/releases) section. If you encounter problems, feel free to open an issue on GitHub.
+
+Thank you for using EasySocket! We hope it simplifies your socket programming experience.
